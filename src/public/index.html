@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestGenie V2</title>
+    <style>
+        :root {
+            --bg-color: #0D1117;
+            --surface-color: #161B22;
+            --border-color: #30363D;
+            --text-primary: #E6EDF3;
+            --text-secondary: #8B949E;
+            --accent-green: #1D9E75;
+            --accent-hover: #16805d;
+            --accent-blue: #2f81f7;
+            --error-red: #E24B4A;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-family);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .sidebar {
+            width: 300px;
+            background-color: var(--surface-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .history-list {
+            flex: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .history-item {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .history-item:hover {
+            border-color: var(--accent-green);
+        }
+
+        .history-item-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 { margin-top: 0; margin-bottom: 0.5rem; font-size: 2.5rem; }
+        p.subtitle { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.1rem; }
+
+        /* Form Controls */
+        .input-section {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        textarea, input[type="number"], select {
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        textarea { resize: vertical; height: 100px; }
+        textarea:focus, input:focus, select:focus { outline: none; border-color: var(--accent-green); }
+        
+        .row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .col { flex: 1; }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            width: 1.2rem;
+            height: 1.2rem;
+            cursor: pointer;
+        }
+
+        button.primary-btn {
+            background-color: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        button.primary-btn:hover:not(:disabled) { background-color: var(--accent-hover); }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .error-msg { color: var(--error-red); margin-bottom: 1rem; display: none; font-weight: 500; }
+        .status { color: var(--accent-green); margin-bottom: 1rem; display: none; font-weight: 500; text-align: center; }
+
+        /* Output Section */
+        .output-section { display: none; }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .output-header h2 { margin: 0; }
+
+        .export-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .export-btn {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .export-btn:hover { border-color: var(--text-primary); }
+
+        /* Test Case Card */
+        .test-case-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .test-case-card.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .test-case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .test-case-card h3 { margin: 0; color: var(--text-primary); font-size: 1.25rem; flex: 1; padding-right: 1rem; }
+
+        .tags-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-tag {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.2rem;
+            border-radius: 4px;
+        }
+        .refresh-btn:hover { background-color: rgba(47, 129, 247, 0.1); }
+
+        .steps-title { color: var(--text-secondary); font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        ol { margin-top: 0; margin-bottom: 1.5rem; padding-left: 1.5rem; color: var(--text-primary); }
+        ol li { margin-bottom: 0.5rem; line-height: 1.4; }
+
+        .expected-result {
+            background-color: rgba(29, 158, 117, 0.1);
+            border-left: 3px solid var(--accent-green);
+            padding: 0.75rem 1rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Page Loader */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .dots-loader {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .dots-loader div {
+            width: 16px;
+            height: 16px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: dots 1.4s infinite ease-in-out both;
+        }
+
+        .dots-loader div:nth-child(1) { animation-delay: -0.32s; }
+        .dots-loader div:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes dots {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div id="page-loader">
+        <div class="dots-loader">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h2>Loading TestGenie...</h2>
+    </div>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Session History</h2>
+        </div>
+        <div id="history-list" class="history-list">
+            <div class="history-item-meta" style="text-align:center; margin-top:2rem;">No history yet.</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <h1>TestGenie</h1>
+            <p class="subtitle">Describe a feature and get AI-generated test cases instantly.</p>
+
+            <div class="input-section">
+                <div class="form-group">
+                    <label>Feature Description *</label>
+                    <textarea data-testid="feature-input" id="feature-input" placeholder="e.g. user login with email and password"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Acceptance Criteria (Optional)</label>
+                    <textarea id="criteria-input" placeholder="e.g. Password must be at least 8 chars..."></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Number of Test Cases</label>
+                        <input type="number" id="count-input" value="5" min="1" max="20">
+                    </div>
+                    <div class="col">
+                        <label>Prompt Version</label>
+                        <select id="version-select">
+                            <option value="standard">Standard</option>
+                            <option value="detailed">Detailed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label class="checkbox-group">
+                    <input type="checkbox" id="edge-cases-check">
+                    <span>Include edge cases and negative scenarios</span>
+                </label>
+
+                <div data-testid="error-msg" class="error-msg"></div>
+                <div data-testid="status" class="status">Generating test cases...</div>
+                <button data-testid="generate-btn" class="primary-btn" id="generate-btn">Generate Test Cases</button>
+            </div>
+
+            <div data-testid="output" class="output-section" id="output-section">
+                <div class="output-header">
+                    <h2>Generated Test Cases</h2>
+                    <div class="export-actions">
+                        <button class="export-btn" id="export-json">JSON</button>
+                        <button class="export-btn" id="export-csv">CSV</button>
+                        <button class="export-btn" id="export-md">Markdown</button>
+                    </div>
+                </div>
+                <div data-testid="test-cases" id="test-cases-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const featureInput = document.getElementById('feature-input');
+        const criteriaInput = document.getElementById('criteria-input');
+        const countInput = document.getElementById('count-input');
+        const versionSelect = document.getElementById('version-select');
+        const edgeCasesCheck = document.getElementById('edge-cases-check');
+        const generateBtn = document.getElementById('generate-btn');
+        const errorMsg = document.querySelector('[data-testid="error-msg"]');
+        const statusEl = document.querySelector('[data-testid="status"]');
+        const outputSection = document.getElementById('output-section');
+        const testCasesContainer = document.getElementById('test-cases-container');
+        const historyList = document.getElementById('history-list');
+
+        // State
+        let currentPayload = null;
+        let currentTestCases = [];
+        let history = []; // Array of { timestamp, payload, testCases }
+
+        // Core Functions
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            statusEl.style.display = 'none';
+            generateBtn.disabled = false;
+        }
+
+        function clearUI() {
+            errorMsg.style.display = 'none';
+            errorMsg.textContent = '';
+            statusEl.style.display = 'none';
+            outputSection.style.display = 'none';
+            testCasesContainer.innerHTML = '';
+        }
+
+        function renderTestCases(testCases) {
+            testCasesContainer.innerHTML = '';
+            testCases.forEach((tc, index) => {
+                testCasesContainer.appendChild(createTestCaseCard(tc, index));
+            });
+            outputSection.style.display = 'block';
+        }
+
+        function createTestCaseCard(tc, index) {
+            const card = document.createElement('div');
+            card.className = 'test-case-card';
+            card.setAttribute('data-testid', 'test-case-card');
+            card.dataset.index = index;
+
+            const header = document.createElement('div');
+            header.className = 'test-case-header';
+
+            const title = document.createElement('h3');
+            title.textContent = tc.title;
+
+            const tagsContainer = document.createElement('div');
+            tagsContainer.className = 'tags-container';
+
+            const category = document.createElement('div');
+            category.className = 'category-tag';
+            category.setAttribute('data-testid', 'category-tag');
+            category.textContent = tc.category;
+
+            const refreshBtn = document.createElement('button');
+            refreshBtn.className = 'refresh-btn';
+            refreshBtn.title = "Regenerate this test case";
+            refreshBtn.innerHTML = '↻'; // Unicode refresh symbol
+            refreshBtn.onclick = () => regenerateSingleCase(index, card);
+
+            tagsContainer.appendChild(category);
+            tagsContainer.appendChild(refreshBtn);
+
+            header.appendChild(title);
+            header.appendChild(tagsContainer);
+            card.appendChild(header);
+
+            const stepsTitle = document.createElement('div');
+            stepsTitle.className = 'steps-title';
+            stepsTitle.textContent = 'Steps:';
+            card.appendChild(stepsTitle);
+
+            const stepsList = document.createElement('ol');
+            stepsList.setAttribute('data-testid', 'steps-list');
+            
+            if (Array.isArray(tc.steps)) {
+                tc.steps.forEach(step => {
+                    const li = document.createElement('li');
+                    li.textContent = step;
+                    stepsList.appendChild(li);
+                });
+            }
+            card.appendChild(stepsList);
+
+            const expected = document.createElement('p');
+            expected.className = 'expected-result';
+            expected.setAttribute('data-testid', 'expected-result');
+            expected.textContent = `Expected: ${tc.expected_result}`;
+            card.appendChild(expected);
+
+            return card;
+        }
+
+        // Generate Action
+        generateBtn.addEventListener('click', async () => {
+            const feature = featureInput.value.trim();
+            const acceptanceCriteria = criteriaInput.value.trim();
+            const testCaseCount = parseInt(countInput.value) || 5;
+            const promptVersion = versionSelect.value;
+            const includeEdgeCases = edgeCasesCheck.checked;
+            
+            clearUI();
+
+            if (!feature) {
+                showError('Please describe a feature to generate test cases.');
+                return;
+            }
+
+            if (feature.length > 2000) {
+                showError('Feature description cannot exceed 2000 characters.');
+                return;
+            }
+
+            // Prepare Payload
+            currentPayload = {
+                feature,
+                acceptanceCriteria,
+                testCaseCount,
+                promptVersion,
+                includeEdgeCases
+            };
+
+            generateBtn.disabled = true;
+            statusEl.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentPayload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to generate test cases');
+                if (!data.testCases) throw new Error('Invalid response format from server');
+
+                currentTestCases = data.testCases;
+                renderTestCases(currentTestCases);
+                addToHistory(currentPayload, currentTestCases);
+
+                statusEl.style.display = 'none';
+                generateBtn.disabled = false;
+            } catch (err) {
+                showError(err.message);
+            }
+        });
+
+        // Single Test Case Regeneration
+        async function regenerateSingleCase(index, cardElement) {
+            const originalCase = currentTestCases[index];
+            cardElement.classList.add('loading');
+            
+            try {
+                const payload = {
+                    ...currentPayload,
+                    regenerateContext: originalCase
+                };
+
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to regenerate');
+                if (data.testCases && data.testCases.length > 0) {
+                    currentTestCases[index] = data.testCases[0];
+                    renderTestCases(currentTestCases);
+                }
+            } catch (err) {
+                alert(`Error regenerating: ${err.message}`);
+                cardElement.classList.remove('loading');
+            }
+        }
+
+        // History Management
+        function addToHistory(payload, testCases) {
+            const entry = {
+                timestamp: new Date().toLocaleTimeString(),
+                payload: { ...payload },
+                testCases: [...testCases]
+            };
+            history.unshift(entry);
+            renderHistory();
+        }
+
+        function renderHistory() {
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="history-item-meta" style="text-align:center; margin-top:2rem;">No history yet.</div>';
+                return;
+            }
+
+            historyList.innerHTML = '';
+            history.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div class="history-item-title">${item.payload.feature}</div>
+                    <div class="history-item-meta">${item.timestamp} • ${item.testCases.length} cases</div>
+                `;
+                div.onclick = () => loadHistoryItem(idx);
+                historyList.appendChild(div);
+            });
+        }
+
+        function loadHistoryItem(index) {
+            const item = history[index];
+            currentPayload = item.payload;
+            currentTestCases = item.testCases;
+            
+            // Restore UI Inputs
+            featureInput.value = item.payload.feature;
+            criteriaInput.value = item.payload.acceptanceCriteria || '';
+            countInput.value = item.payload.testCaseCount || 5;
+            versionSelect.value = item.payload.promptVersion || 'standard';
+            edgeCasesCheck.checked = item.payload.includeEdgeCases || false;
+
+            // Restore Output
+            clearUI();
+            renderTestCases(currentTestCases);
+        }
+
+        // Export Functions
+        function triggerDownload(dataStr, filename) {
+            const a = document.createElement('a');
+            a.href = dataStr;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        document.getElementById('export-json').addEventListener('click', () => {
+            if (!currentTestCases.length) return;
+            const data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentTestCases, null, 2));
+            triggerDownload(data, 'testcases.json');
+        });
+
+        document.getElementById('export-csv').addEventListener('click', () => {
+            if (!currentTestCases.length) return;
+            // CSV Header
+            let csvContent = "Title,Category,Expected Result,Steps\n";
+            currentTestCases.forEach(tc => {
+                // Escape quotes
+                const title = `"${tc.title.replace(/"/g, '""')}"`;
+                const category = `"${tc.category.replace(/"/g, '""')}"`;
+                const expected = `"${tc.expected_result.replace(/"/g, '""')}"`;
+                const steps = `"${tc.steps.join(' | ').replace(/"/g, '""')}"`;
+                csvContent += `${title},${category},${expected},${steps}\n`;
+            });
+            const data = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+            triggerDownload(data, 'testcases.csv');
+        });
+
+        document.getElementById('export-md').addEventListener('click', () => {
+            if (!currentTestCases.length) return;
+            let mdContent = `# Generated Test Cases\n\n`;
+            currentTestCases.forEach((tc, i) => {
+                mdContent += `### ${i + 1}. ${tc.title}\n`;
+                mdContent += `**Category:** ${tc.category}\n\n`;
+                mdContent += `**Steps:**\n`;
+                tc.steps.forEach((step, idx) => {
+                    mdContent += `${idx + 1}. ${step}\n`;
+                });
+                mdContent += `\n**Expected Result:**\n${tc.expected_result}\n\n---\n\n`;
+            });
+            const data = "data:text/markdown;charset=utf-8," + encodeURIComponent(mdContent);
+            triggerDownload(data, 'testcases.md');
+        });
+
+        // Page Loader logic
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500); // Wait for transition to finish
+            }, 2000); // 2 second delay
+        });
+    </script>
+</body>
+</html>

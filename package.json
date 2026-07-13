@@ -1,0 +1,23 @@
+{
+  "name": "testgenie",
+  "version": "1.0.0",
+  "description": "AI-generated test cases",
+  "type": "module",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "test:ui": "npx playwright test tests/ui"
+  },
+  "dependencies": {
+    "@google/genai": "^2.11.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "vercel": "^54.17.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.1.1",
+    "tsx": "^4.23.0",
+    "typescript": "^7.0.2"
+  }
+}
