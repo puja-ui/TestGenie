@@ -1,6 +1,8 @@
 # TestGenie
 Generate test cases instantly 🧞‍♂️
 
+**[🚀 Try it live here!](https://test-genie-one.vercel.app/)**
+
 Automated, AI-powered test case generation for QA engineers and developers.
 
 Translates feature descriptions and acceptance criteria into structured test cases using Gemini — categorizing them into Functional, Security, Boundary, and UX tests, and providing one-click exports to JSON, CSV, and Markdown.
