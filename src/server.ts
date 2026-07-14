@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 
 // Middleware to parse JSON bodies and serve static files
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Initialize Gemini API client
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
