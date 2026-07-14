@@ -165,4 +165,6 @@ The project was restructured to decouple the Express app routing from the static
 
 ## Example Report
 
+<img width="1075" height="506" alt="image" src="https://github.com/user-attachments/assets/54c6ec87-1101-4c28-ae9e-fbe8555ed75a" />
+
 <!-- Drag and drop your exported report or generated test cases screenshot here -->
