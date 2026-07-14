@@ -126,7 +126,12 @@ Return ONLY a valid JSON array. No explanation outside the JSON.`;
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`TestGenie server is running on http://localhost:${PORT}`);
-});
+// Start the server if running locally (Vercel automatically sets NODE_ENV=production)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`TestGenie server is running on http://localhost:${PORT}`);
+  });
+}
+
+// Export the Express app for Vercel
+export default app;
