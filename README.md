@@ -6,6 +6,8 @@ Automated, AI-powered test case generation for QA engineers and developers.
 Translates feature descriptions and acceptance criteria into structured test cases using Gemini — categorizing them into Functional, Security, Boundary, and UX tests, and providing one-click exports to JSON, CSV, and Markdown.
 
 <!-- Drag and drop your App Interface screenshot here -->
+<img width="1417" height="879" alt="image" src="https://github.com/user-attachments/assets/5f6b587d-d90a-4a7e-addb-4f54cd663394" />
+
 
 ---
 
