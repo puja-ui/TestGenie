@@ -5,6 +5,8 @@ Automated, AI-powered test case generation for QA engineers and developers.
 
 Translates feature descriptions and acceptance criteria into structured test cases using Gemini — categorizing them into Functional, Security, Boundary, and UX tests, and providing one-click exports to JSON, CSV, and Markdown.
 
+<!-- Drag and drop your App Interface screenshot here -->
+
 ---
 
 ## The problem this solves
@@ -156,3 +158,9 @@ The project was restructured to decouple the Express app routing from the static
 - Implement integration testing with Playwright for the UI and pytest for API testing
 - Add Jira/Linear integration to directly push generated test cases to ticket tracking
 - Allow custom system prompts for different testing methodologies (e.g., BDD style "Given/When/Then")
+
+---
+
+## Example Report
+
+<!-- Drag and drop your exported report or generated test cases screenshot here -->
