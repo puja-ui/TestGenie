@@ -10,6 +10,9 @@ Translates feature descriptions and acceptance criteria into structured test cas
 <!-- Drag and drop your App Interface screenshot here -->
 <img width="1417" height="879" alt="image" src="https://github.com/user-attachments/assets/5f6b587d-d90a-4a7e-addb-4f54cd663394" />
 
+## Example Report
+
+<img width="1075" height="506" alt="image" src="https://github.com/user-attachments/assets/54c6ec87-1101-4c28-ae9e-fbe8555ed75a" />
 
 ---
 
@@ -163,10 +166,5 @@ The project was restructured to decouple the Express app routing from the static
 - Add Jira/Linear integration to directly push generated test cases to ticket tracking
 - Allow custom system prompts for different testing methodologies (e.g., BDD style "Given/When/Then")
 
----
-
-## Example Report
-
-<img width="1075" height="506" alt="image" src="https://github.com/user-attachments/assets/54c6ec87-1101-4c28-ae9e-fbe8555ed75a" />
-
+--
 <!-- Drag and drop your exported report or generated test cases screenshot here -->
