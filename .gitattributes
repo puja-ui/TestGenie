@@ -1,5 +1,7 @@
 # Ignore HTML files in GitHub's language statistics
-*.html linguist-detectable=false
+*.html linguist-vendored=true
+public/* linguist-vendored=true
+public/index.html linguist-vendored=true
 
-# If you have large built/generated files in specific folders, you can also mark them as vendored:
-# public/* linguist-vendored
+# Explicitly ensure TypeScript is detected
+*.ts linguist-detectable=true
